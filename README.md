@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # FoodHub — Event-Driven Microservices Food Delivery Platform
 
 Software Design & Architecture project — **Dinesh Kumar (23BCE7592)**, VIT-AP.
@@ -103,3 +104,7 @@ tests/unit, tests/e2e      automated tests (node:test)
 docs/ARCHITECTURE.md       architecture documentation, diagrams, ADRs, quality-attribute analysis
 Dockerfile, docker-compose.yml, .github/workflows/ci.yml
 ```
+=======
+# FoodHub
+FoodHub is a full-stack web application designed for online food ordering and management. It connects users with local food options through an intuitive digital interface, streamlining the browsing and ordering process.
+>>>>>>> aab1274e39fa72d340be7d7689035ab452243c3c
