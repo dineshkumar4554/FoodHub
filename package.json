@@ -1,0 +1,16 @@
+{
+  "name": "foodhub",
+  "version": "1.0.0",
+  "description": "FoodHub - event-driven microservices food delivery platform (SDA project)",
+  "private": true,
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "start": "node scripts/start-all.js",
+    "demo": "node scripts/demo.js",
+    "loadtest": "node scripts/loadtest.js",
+    "test": "node --test",
+    "test:unit": "node --test tests/unit",
+    "test:e2e": "node --test tests/e2e"
+  },
+  "license": "MIT"
+}

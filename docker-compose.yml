@@ -1,0 +1,69 @@
+# Deployment: only the API gateway is published to the host; every other service lives on a private network.
+x-common: &common
+  build: .
+  restart: unless-stopped
+  networks: [internal]
+  environment: &env
+    JWT_SECRET: ${JWT_SECRET:?copy .env.example to .env and set JWT_SECRET}
+    INTERNAL_KEY: ${INTERNAL_KEY:?copy .env.example to .env and set INTERNAL_KEY}
+    BUS_URL: http://event-bus:4000
+    USER_URL: http://user:4001
+    RESTAURANT_URL: http://restaurant:4002
+    ORDER_URL: http://order:4003
+    PAYMENT_URL: http://payment:4004
+    DELIVERY_URL: http://delivery:4005
+    NOTIFICATION_URL: http://notification:4006
+
+services:
+  event-bus:
+    <<: *common
+    environment: { <<: *env, SERVICE: event-bus }
+  user:
+    <<: *common
+    environment: { <<: *env, SERVICE: user }
+    volumes: [ "user-data:/app/data" ]
+  restaurant:
+    <<: *common
+    environment: { <<: *env, SERVICE: restaurant }
+    volumes: [ "restaurant-data:/app/data" ]
+  order:
+    <<: *common
+    environment: { <<: *env, SERVICE: order }
+    volumes: [ "order-data:/app/data" ]
+    depends_on: [ event-bus, restaurant, payment ]
+  payment:
+    <<: *common
+    environment: { <<: *env, SERVICE: payment }
+    volumes: [ "payment-data:/app/data" ]
+    depends_on: [ event-bus ]
+  delivery:
+    <<: *common
+    environment: { <<: *env, SERVICE: delivery }
+    volumes: [ "delivery-data:/app/data" ]
+    depends_on: [ event-bus ]
+  notification:
+    <<: *common
+    environment: { <<: *env, SERVICE: notification }
+    volumes: [ "notification-data:/app/data" ]
+    depends_on: [ event-bus ]
+  gateway:
+    <<: *common
+    environment: { <<: *env, SERVICE: gateway }
+    ports: [ "3000:3000" ]
+    depends_on: [ user, restaurant, order, delivery, notification ]
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+
+networks:
+  internal: {}
+
+volumes:
+  user-data: {}
+  restaurant-data: {}
+  order-data: {}
+  payment-data: {}
+  delivery-data: {}
+  notification-data: {}
